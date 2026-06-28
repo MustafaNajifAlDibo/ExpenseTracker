@@ -52,7 +52,6 @@ namespace ExpenseTracker.ViewModels {
                     var newExpense = new Expense() {
                         Id = SelectedExpense.Id,
                         Name = ExpenseName,
-                        Date = ExpenseDate,
                         Category = ExpenseCategory,
                         Amount = ExpenseAmount,
                     };
@@ -115,7 +114,6 @@ namespace ExpenseTracker.ViewModels {
         public void SetData() {
             ExpenseName = SelectedExpense?.Name;
             ExpenseAmount = Convert.ToDouble(SelectedExpense?.Amount);
-            ExpenseDate = SelectedExpense?.Date;
             ExpenseCategory = SelectedExpense?.Category;
         }
 

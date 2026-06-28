@@ -10,6 +10,6 @@
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate page:ExpensePage}"
-        Route="MainPage" />
+        Route="ExpensePage" />
 
 </Shell>

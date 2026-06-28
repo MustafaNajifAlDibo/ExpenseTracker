@@ -10,11 +10,25 @@
         <Entry Text="{Binding ExpenseCategory}" Placeholder="Category" />
 
         <Button Text="Add Expense" Command="{Binding AddExpenseCommand}" />
+        <Grid
+            RowDefinitions="Auto"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="15">
+
+            <Button Grid.Column="0"
+                Text="Edit Expense"
+                Command="{Binding EditExpenseCommand}" />
+
+            <Button Grid.Column="1"
+                Text="Delete Expense"
+                Command="{Binding DeleteExpenseCommand}" />
+
+        </Grid>
 
         <CollectionView
             SelectionChanged="CollectionView_SelectionChanged"
             SelectionMode="Single"
-            SelectedItem="{Binding SelectedNote, Mode=TwoWay}"
+            SelectedItem="{Binding SelectedExpense, Mode=TwoWay}"
             ItemsSource="{Binding ExpenseCollection}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
