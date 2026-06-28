@@ -13,17 +13,16 @@ namespace ExpenseTracker.ViewModels {
 
 
         [ObservableProperty]
-        public partial string? ExpenseName {  get; set; }
+        public partial string? ExpenseName { get; set; }
 
         [ObservableProperty]
-        public partial double ExpenseAmount {  get; set; }
+        public partial double ExpenseAmount { get; set; }
 
         [ObservableProperty]
-        public partial string? ExpenseDate {  get; set; }
+        public partial string? ExpenseDate { get; set; }
 
         [ObservableProperty]
-        public partial string? ExpenseCategory {  get; set; }
-
+        public partial string? ExpenseCategory { get; set; }
 
         [ObservableProperty]
         public partial Expense? SelectedExpense { get; set; }
@@ -38,60 +37,60 @@ namespace ExpenseTracker.ViewModels {
         }
 
         [RelayCommand]
-        private async Task<bool> EditExpense() {
+        private async Task EditExpense() {
 
             if (string.IsNullOrEmpty(ExpenseName)
                 || string.IsNullOrEmpty(ExpenseCategory)
                 || ExpenseAmount <= 0) {
                 await Shell.Current.DisplayAlertAsync("Warning", "Messing one or two text", "OK");
-                return false;
+                return;
             }
-            if (ExpenseCollection != null) {
-
-                if (SelectedExpense != null) {
-
-                    // Set new Expense
-                    var newExpense = new Expense() {
-                        Id = SelectedExpense.Id,
-                        Name = ExpenseName,
-                        Date = SelectedExpense.Date,
-                        Category = ExpenseCategory,
-                        Amount = ExpenseAmount,
-                    };
-                    await expenseEntity.UpdateDataAsync(newExpense);
-                    LoadData();
-
-                    SelectedExpense = await expenseEntity.FindAsync(newExpense.Id);
-                }
+            if (ExpenseCollection == null) {
+                await Shell.Current.DisplayAlertAsync("Warning", "No items in the list", "OK");
+                return;
             }
-            return true;
+
+            if (SelectedExpense == null) {
+                await Shell.Current.DisplayAlertAsync("Warning", "Messing item selection", "OK");
+                return;
+            }
+            // Set new Expense
+            var newExpense = new Expense() {
+                Id = SelectedExpense.Id,
+                Name = ExpenseName,
+                Date = SelectedExpense.Date,
+                Category = ExpenseCategory,
+                Amount = ExpenseAmount,
+            };
+            await expenseEntity.UpdateDataAsync(newExpense);
+            LoadData();
+
+            SelectedExpense = await expenseEntity.FindAsync(newExpense.Id);
+
         }
 
         [RelayCommand]
-        private async Task<bool> DeleteExpense() {
+        private async Task DeleteExpense() {
 
-            if (SelectedExpense != null) {
+            if (SelectedExpense == null) {
+                await Shell.Current.DisplayAlertAsync("Warning", "Messing item selection", "OK");
+                return;
+            }
+            await expenseEntity.RemoveDataAsync(SelectedExpense);
+            LoadData();
 
-                await expenseEntity.RemoveDataAsync(SelectedExpense);
-                LoadData();
-
-                // Reset Values
-                ExpenseName = string.Empty;
-                ExpenseAmount = 0;
-                ExpenseDate = string.Empty;
-                ExpenseCategory = string.Empty;
-                return true;
-            } else return false;
+            // Reset Values
+            ResetItemValues();
         }
 
         [RelayCommand]
-        private async Task<bool> AddExpense() {
+        private async Task AddExpense() {
 
             if (string.IsNullOrEmpty(ExpenseName)
-                ||string.IsNullOrEmpty(ExpenseCategory)
-                ||ExpenseAmount <= 0) {
+                || string.IsNullOrEmpty(ExpenseCategory)
+                || ExpenseAmount <= 0) {
                 await Shell.Current.DisplayAlertAsync("Warning", "Messing one or two Fields", "OK");
-                return false;
+                return ;
             }
 
             // for DB Test
@@ -105,12 +104,7 @@ namespace ExpenseTracker.ViewModels {
             LoadData();
 
             // Reset Values
-            ExpenseName = string.Empty;
-            ExpenseAmount = 0;
-            ExpenseDate = string.Empty;
-            ExpenseCategory = string.Empty;
-
-            return true;
+            ResetItemValues();
         }
 
 
@@ -154,6 +148,13 @@ namespace ExpenseTracker.ViewModels {
                 .ToList();
 
             return groupedData;
+        }
+
+        private void ResetItemValues() {
+            ExpenseName = string.Empty;
+            ExpenseAmount = 0;
+            ExpenseDate = string.Empty;
+            ExpenseCategory = string.Empty;
         }
     }
 }
