@@ -1,8 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ExpenseTracker.Data;
+using Microsoft.Extensions.Logging;
 
 namespace ExpenseTracker {
     public static class MauiProgram {
         public static MauiApp CreateMauiApp() {
+
+            // Create Database
+            DBContext dBContext = new DBContext();
+            SQLitePCL.Batteries.Init();
+            dBContext.Database.EnsureCreated();
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
