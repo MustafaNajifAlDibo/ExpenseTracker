@@ -4,32 +4,36 @@
              x:Class="ExpenseTracker.Views.ExpensePage"
              xmlns:vm="clr-namespace:ExpenseTracker.ViewModels"
              Title="ExpensePage">
-    <VerticalStackLayout Padding="20" Spacing="10">
-        <Entry Text="{Binding ExpenseName}" Placeholder="Name of Expense" />
-        <Entry Text="{Binding ExpenseAmount}" Placeholder="Amount" Keyboard="Numeric" />
-        <Entry Text="{Binding ExpenseCategory}" Placeholder="Category" />
 
-        <Button Text="Add Expense" Command="{Binding AddExpenseCommand}" />
-        <Grid
-            RowDefinitions="Auto"
-            ColumnDefinitions="*,*"
-            ColumnSpacing="15">
+    <Grid RowDefinitions="Auto, *">
 
-            <Button Grid.Column="0"
-                Text="Edit Expense"
-                Command="{Binding EditExpenseCommand}" />
+        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="10">
+            <Entry Text="{Binding ExpenseName}" Placeholder="Name of Expense" />
+            <Entry Text="{Binding ExpenseAmount}" Placeholder="Amount" Keyboard="Numeric" />
+            <Entry Text="{Binding ExpenseCategory}" Placeholder="Category" />
 
-            <Button Grid.Column="1"
-                Text="Delete Expense"
-                Command="{Binding DeleteExpenseCommand}" />
+            <Button Text="Add Expense" Command="{Binding AddExpenseCommand}" />
+            <Grid
+    RowDefinitions="Auto"
+    ColumnDefinitions="*,*"
+    ColumnSpacing="15">
 
-        </Grid>
+                <Button Grid.Column="0"
+        Text="Edit Expense"
+        Command="{Binding EditExpenseCommand}" />
 
-        <CollectionView
-            SelectionChanged="CollectionView_SelectionChanged"
-            SelectionMode="Single"
-            SelectedItem="{Binding SelectedExpense, Mode=TwoWay}"
-            ItemsSource="{Binding ExpenseCollection}">
+                <Button Grid.Column="1"
+        Text="Delete Expense"
+        Command="{Binding DeleteExpenseCommand}" />
+
+            </Grid>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1"
+        SelectionChanged="CollectionView_SelectionChanged"
+        SelectionMode="Single"
+        SelectedItem="{Binding SelectedExpense, Mode=TwoWay}"
+        ItemsSource="{Binding ExpenseCollection}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <HorizontalStackLayout Padding="10" Spacing="20">
@@ -40,5 +44,9 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </VerticalStackLayout>
+
+    </Grid>
+
+
+    
 </ContentPage>

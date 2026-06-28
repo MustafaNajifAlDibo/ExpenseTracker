@@ -10,6 +10,7 @@ namespace ExpenseTracker {
             // Create Database
             DBContext dBContext = new DBContext();
             SQLitePCL.Batteries.Init();
+            _= dBContext.SetupDatabase();
             dBContext.Database.EnsureCreated();
 
             var builder = MauiApp.CreateBuilder();
