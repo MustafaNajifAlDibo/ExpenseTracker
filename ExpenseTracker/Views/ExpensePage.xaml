@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpenseTracker.Views.ExpensePage"
+             xmlns:vm="clr-namespace:ExpenseTracker.ViewModels"
+             Title="ExpensePage">
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Entry Text="{Binding ExpenseName}" Placeholder="Name of Expense" />
+        <Entry Text="{Binding ExpenseAmount}" Placeholder="Amount" Keyboard="Numeric" />
+        <Entry Text="{Binding ExpenseCategory}" Placeholder="Category" />
+
+        <Button Text="Add Expense" Command="{Binding AddExpenseCommand}" />
+
+        <CollectionView
+            SelectionChanged="CollectionView_SelectionChanged"
+            SelectionMode="Single"
+            SelectedItem="{Binding SelectedNote, Mode=TwoWay}"
+            ItemsSource="{Binding ExpenseCollection}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <HorizontalStackLayout Padding="10" Spacing="20">
+                        <Label Text="{Binding Name}" WidthRequest="100" />
+                        <Label Text="{Binding Amount, StringFormat='{0:C}'}" FontAttributes="Bold" />
+                        <Label Text="{Binding Category}" TextColor="Gray" />
+                    </HorizontalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

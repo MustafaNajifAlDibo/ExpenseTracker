@@ -1,4 +1,6 @@
 ﻿using ExpenseTracker.Data;
+using ExpenseTracker.ViewModels;
+using ExpenseTracker.Views;
 using Microsoft.Extensions.Logging;
 
 namespace ExpenseTracker {
@@ -17,6 +19,9 @@ namespace ExpenseTracker {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.Services.AddSingleton<ExpensePage>();
+            builder.Services.AddSingleton<ExpenseViewModel>();
 
 #if DEBUG
     		builder.Logging.AddDebug();
