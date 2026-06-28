@@ -4,34 +4,49 @@ using Microsoft.EntityFrameworkCore;
 namespace ExpenseTracker.Data {
     public class ExpenseEntity : IDataHelper<Expense> {
 
-        private DBContext dBContext;
+        private DBContext _dBContext;
 
         public ExpenseEntity() {
-            dBContext = new DBContext();
+            _dBContext = new DBContext();
         }
 
         public async Task AddDataAsync(Expense table) {
-            await dBContext.Expenses.AddAsync(table);
-            await dBContext.SaveChangesAsync();
+            await _dBContext.Expenses.AddAsync(table);
+            await _dBContext.SaveChangesAsync();
         }
 
         public async Task<Expense> FindAsync(int Id) {
-            return await dBContext.Expenses.FindAsync(Id);
+            return await _dBContext.Expenses.FindAsync(Id);
         }
 
         public async Task<List<Expense>> GetAllAsync() {
-            return await dBContext.Expenses.ToListAsync();
+            return await _dBContext.Expenses.ToListAsync();
         }
 
         public async Task RemoveDataAsync(Expense table) {
-            dBContext.Expenses.Remove(table);
-            await dBContext.SaveChangesAsync();
+            _dBContext.Expenses.Remove(table);
+            await _dBContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveDataAtAsync(int Id) {
+            Expense? expense = await FindAsync(Id);
+            await RemoveDataAsync(expense);
         }
 
         public async Task UpdateDataAsync(Expense table) {
-            dBContext = new DBContext();
-            dBContext.Expenses.Update(table);
-            await dBContext.SaveChangesAsync();
+            // Check if entity is already tracked
+            var tracked = _dBContext.ChangeTracker
+                                    .Entries<Expense>()
+                                    .FirstOrDefault(e => e.Entity.Id == table.Id);
+
+            if (tracked != null) {
+                // Entity is tracked — update values directly
+                tracked.CurrentValues.SetValues(table);
+            } else {
+                // Entity is not tracked — attach and mark as modified
+                _dBContext.Expenses.Update(table);
+            }
+            await _dBContext.SaveChangesAsync();
         }
     }
 }

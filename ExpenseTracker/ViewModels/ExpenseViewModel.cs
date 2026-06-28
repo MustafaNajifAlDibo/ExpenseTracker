@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using ExpenseTracker.Data;
 using ExpenseTracker.Models;
+using Microcharts;
+using SkiaSharp;
 using System.Collections.ObjectModel;
 
 namespace ExpenseTracker.ViewModels {
@@ -52,6 +54,7 @@ namespace ExpenseTracker.ViewModels {
                     var newExpense = new Expense() {
                         Id = SelectedExpense.Id,
                         Name = ExpenseName,
+                        Date = SelectedExpense.Date,
                         Category = ExpenseCategory,
                         Amount = ExpenseAmount,
                     };
@@ -123,6 +126,34 @@ namespace ExpenseTracker.ViewModels {
             foreach (var expense in await expenseEntity.GetAllAsync()) {
                 ExpenseCollection?.Add(expense);
             }
+        }
+
+        public List<ChartEntry> GetCategoryCharts() {
+
+            // داخل دالة GetCategoryCharts في ViewModel
+            string[] colors = {
+        "#7C6AF7", // بنفسجي — اللون الأساسي للثيم
+        "#5AACF5", // أزرق فاتح
+        "#4CB87A", // أخضر
+        "#F5706A", // أحمر/كورال
+        "#F5A623", // برتقالي
+        "#A78BFA", // بنفسجي فاتح
+        "#F472B6", // وردي
+        "#34D399", // أخضر فاتح
+        "#60A5FA"  // أزرق
+            };
+            int i = 0;
+
+            var groupedData = ExpenseCollection?
+                .GroupBy(e => e.Category)
+                .Select(g => new ChartEntry((float)g.Sum(e => e.Amount)) {
+                    Label = g.Key,
+                    ValueLabel = g.Sum(e => e.Amount).ToString("C"),
+                    Color = SKColor.Parse(colors[i++ % colors.Length])
+                })
+                .ToList();
+
+            return groupedData;
         }
     }
 }

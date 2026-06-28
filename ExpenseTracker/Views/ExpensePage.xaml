@@ -3,50 +3,328 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ExpenseTracker.Views.ExpensePage"
              xmlns:vm="clr-namespace:ExpenseTracker.ViewModels"
-             Title="ExpensePage">
-
-    <Grid RowDefinitions="Auto, *">
-
-        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="10">
-            <Entry Text="{Binding ExpenseName}" Placeholder="Name of Expense" />
-            <Entry Text="{Binding ExpenseAmount}" Placeholder="Amount" Keyboard="Numeric" />
-            <Entry Text="{Binding ExpenseCategory}" Placeholder="Category" />
-
-            <Button Text="Add Expense" Command="{Binding AddExpenseCommand}" />
-            <Grid
-    RowDefinitions="Auto"
-    ColumnDefinitions="*,*"
-    ColumnSpacing="15">
-
-                <Button Grid.Column="0"
-        Text="Edit Expense"
-        Command="{Binding EditExpenseCommand}" />
-
-                <Button Grid.Column="1"
-        Text="Delete Expense"
-        Command="{Binding DeleteExpenseCommand}" />
-
-            </Grid>
-        </VerticalStackLayout>
-
-        <CollectionView Grid.Row="1"
-        SelectionChanged="CollectionView_SelectionChanged"
-        SelectionMode="Single"
-        SelectedItem="{Binding SelectedExpense, Mode=TwoWay}"
-        ItemsSource="{Binding ExpenseCollection}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <HorizontalStackLayout Padding="10" Spacing="20">
-                        <Label Text="{Binding Name}" WidthRequest="100" />
-                        <Label Text="{Binding Amount, StringFormat='{0:C}'}" FontAttributes="Bold" />
-                        <Label Text="{Binding Category}" TextColor="Gray" />
-                    </HorizontalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-    </Grid>
-
+             xmlns:maui="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
+             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             BackgroundColor="#0F0F14">
 
     
+    <Grid RowDefinitions="Auto, Auto, *, Auto">
+        <!-- ════════════════════════════════════ -->
+        <!--  ROW 0 — Custom Header              -->
+        <!-- ════════════════════════════════════ -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*, Auto"
+              Padding="20,0,20,16"
+              BackgroundColor="#0F0F14">
+            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                <Label Text="Expenses"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="#E8E8F0"/>
+                <Label Text="June 2026"
+                       FontSize="13"
+                       TextColor="#4A4A60"/>
+            </VerticalStackLayout>
+            <!-- ════════════════════════════════════ -->
+            <!--  FAB — زر عائم للتبديل              -->
+            <!-- ════════════════════════════════════ -->
+            <Border x:Name="FabButton"
+        WidthRequest="56"
+        HeightRequest="56"
+        StrokeShape="RoundRectangle 18"
+        BackgroundColor="#7C6AF7"
+        Stroke="Transparent"
+        HorizontalOptions="End"
+        VerticalOptions="End">
+
+                <Label x:Name="FabIcon"
+           Text="📊"
+           FontSize="22"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnFabTapped"/>
+                </Border.GestureRecognizers>
+            </Border>
+
+        </Grid>
+        <!-- ════════════════════════════════════ -->
+        <!--  ROW 1 — Input Card                 -->
+        <!-- ════════════════════════════════════ -->
+        <Border Grid.Row="1"
+                Margin="14,0,14,6"
+                Padding="16"
+                BackgroundColor="#1C1C26"
+                StrokeShape="RoundRectangle 18"
+                Stroke="#2A2A38">
+            <VerticalStackLayout Spacing="10">
+
+                <Label Text="NEW EXPENSE"
+                       FontSize="10"
+                       FontAttributes="Bold"
+                       CharacterSpacing="1.5"
+                       TextColor="#7C6AF7"/>
+
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                    <Border Grid.Column="0"
+                            StrokeShape="RoundRectangle 10"
+                            Stroke="#2E2E3E"
+                            BackgroundColor="#13131D"
+                            Padding="14,11">
+                        <Entry Text="{Binding ExpenseName}"
+                               Placeholder="Expense name"
+                               PlaceholderColor="#4A4A60"
+                               TextColor="#E8E8F0"
+                               FontSize="14"
+                               BackgroundColor="Transparent"/>
+                    </Border>
+                    <Border Grid.Column="1"
+                            StrokeShape="RoundRectangle 10"
+                            Stroke="#2E2E3E"
+                            BackgroundColor="#13131D"
+                            Padding="14,11"
+                            WidthRequest="110">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Label Grid.Column="0"
+                                   Text="$"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#7C6AF7"
+                                   VerticalOptions="Center"
+                                   Margin="0,0,6,0"/>
+                            <Entry Grid.Column="1"
+                                   Text="{Binding ExpenseAmount}"
+                                   Placeholder="0.00"
+                                   PlaceholderColor="#4A4A60"
+                                   TextColor="#E8E8F0"
+                                   FontSize="14"
+                                   Keyboard="Numeric"
+                                   BackgroundColor="Transparent"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Border StrokeShape="RoundRectangle 10"
+                        Stroke="#2E2E3E"
+                        BackgroundColor="#13131D"
+                        Padding="14,4">
+                    <Picker x:Name="CategoryPicker"
+                            Title="Select category"
+                            TitleColor="#4A4A60"
+                            TextColor="#E8E8F0"
+                            BackgroundColor="Transparent"
+                            SelectedItem="{Binding ExpenseCategory}">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Essentials</x:String>
+                                <x:String>Utilities</x:String>
+                                <x:String>Food</x:String>
+                                <x:String>Transport</x:String>
+                                <x:String>Entertainment</x:String>
+                                <x:String>Education</x:String>
+                                <x:String>Health</x:String>
+                                <x:String>Shopping</x:String>
+                                <x:String>Gifts</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </Border>
+
+                <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
+                    <Border Grid.Column="0"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#7C6AF7"
+                            Stroke="Transparent">
+                        <Button Text="＋  Add Expense"
+                                Command="{Binding AddExpenseCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="White"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                HeightRequest="46"/>
+                    </Border>
+                    <Border Grid.Column="1"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#1E2D40"
+                            Stroke="#1A4A7A"
+                            WidthRequest="80">
+                        <Button Text="✏️  Edit"
+                                Command="{Binding EditExpenseCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="#5AACF5"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                HeightRequest="46"/>
+                    </Border>
+                    <Border Grid.Column="2"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#2D1E1E"
+                            Stroke="#7A1A1A"
+                            WidthRequest="80">
+                        <Button Text="🗑️  Del"
+                                Command="{Binding DeleteExpenseCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="#F5706A"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                HeightRequest="46"/>
+                    </Border>
+                </Grid>
+
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- ════════════════════════════════════════════════════ -->
+        <!--  ROW 2 — Content Area (List + Chart متراكبان)       -->
+        <!-- ════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="2">
+
+            <!-- ── قائمة المصروفات ── -->
+            <Grid x:Name="ListSection"
+                  RowDefinitions="Auto, *"
+                  IsVisible="True">
+
+                <Grid Grid.Row="0"
+                      ColumnDefinitions="Auto, *, Auto"
+                      Padding="28,8,28,4"
+                      ColumnSpacing="12">
+                    <Label Grid.Column="0" Text=" " WidthRequest="38"/>
+                    <Label Grid.Column="1"
+                           Text="EXPENSE"
+                           FontSize="10" FontAttributes="Bold"
+                           CharacterSpacing="1.2" TextColor="#4A4A60"/>
+                    <Label Grid.Column="2"
+                           Text="AMOUNT"
+                           FontSize="10" FontAttributes="Bold"
+                           CharacterSpacing="1.2" TextColor="#4A4A60"
+                           HorizontalTextAlignment="End"/>
+                </Grid>
+
+                <CollectionView Grid.Row="1"
+                                SelectionChanged="CollectionView_SelectionChanged"
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedExpense, Mode=TwoWay}"
+                                ItemsSource="{Binding ExpenseCollection}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="6"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="14,0"
+                                    Padding="14,12"
+                                    StrokeShape="RoundRectangle 14"
+                                    Stroke="#2A2A38">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="#1C1C26"/>
+                                                <Setter Property="Stroke" Value="#2A2A38"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="#1E1A30"/>
+                                                <Setter Property="Stroke" Value="#7C6AF7"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                                    <Border Grid.Column="0"
+                                            WidthRequest="38" HeightRequest="38"
+                                            StrokeShape="RoundRectangle 10"
+                                            BackgroundColor="#13131D"
+                                            Stroke="Transparent"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding CategoryIcon}"
+                                               FontSize="18"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         VerticalOptions="Center"
+                                                         Spacing="2">
+                                        <Label Text="{Binding Name}"
+                                               FontSize="14" FontAttributes="Bold"
+                                               TextColor="#E8E8F0"
+                                               LineBreakMode="TailTruncation" MaxLines="1"/>
+                                        <Label Text="{Binding Category}"
+                                               FontSize="11" TextColor="#9090B0"/>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2">
+                                        <Label 
+                                            Text="{Binding Amount, StringFormat='{0:C}'}"
+                                            FontSize="15" FontAttributes="Bold"
+                                            TextColor="#7C6AF7"
+                                            VerticalOptions="Center"/>
+                                        <Label Text="{Binding Date}"
+                                            FontSize="11" TextColor="#9090B0"/>
+                                    </VerticalStackLayout>
+                                    
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <!-- ── قسم الرسوميات ── -->
+            <Border x:Name="ChartSection"
+                    Margin="14,8,14,14"
+                    Padding="16"
+                    BackgroundColor="#1C1C26"
+                    StrokeShape="RoundRectangle 18"
+                    Stroke="#2A2A38"
+                    IsVisible="False"
+                    VerticalOptions="Fill">
+                <Grid RowDefinitions="Auto, Auto, Auto, *"
+      RowSpacing="10">
+
+                    <Label Grid.Row="0"
+           Text="SPENDING BREAKDOWN"
+           FontSize="10" FontAttributes="Bold"
+           CharacterSpacing="1.5" TextColor="#7C6AF7"/>
+
+                    <microcharts:ChartView Grid.Row="1"
+                           x:Name="ExpensesChart"
+                           HeightRequest="220"
+                           BackgroundColor="Transparent"/>
+
+                    <BoxView Grid.Row="2"
+             HeightRequest="1"
+             BackgroundColor="#2A2A38"/>
+
+                    <CollectionView Grid.Row="3" x:Name="LegendList" >
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto, *, Auto" Padding="0,2">
+                                    <Border Grid.Column="0"
+                        WidthRequest="10" HeightRequest="10"
+                        StrokeShape="Ellipse"
+                        BackgroundColor="{Binding Color}"
+                        Stroke="Transparent"
+                        VerticalOptions="Center"
+                        Margin="0,0,10,0"/>
+                                    <Label Grid.Column="1"
+                       Text="{Binding Label}"
+                       FontSize="13" TextColor="#C0C0D8"
+                       VerticalOptions="Center"/>
+                                    <Label Grid.Column="2"
+                       Text="{Binding ValueLabel}"
+                       FontSize="13" FontAttributes="Bold"
+                       TextColor="#7C6AF7"
+                       VerticalOptions="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </Grid>
+            </Border>
+
+            
+        </Grid>
+
+    </Grid>
 </ContentPage>

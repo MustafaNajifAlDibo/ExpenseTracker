@@ -2,6 +2,7 @@
 using ExpenseTracker.ViewModels;
 using ExpenseTracker.Views;
 using Microsoft.Extensions.Logging;
+using Microcharts.Maui;
 
 namespace ExpenseTracker {
     public static class MauiProgram {
@@ -16,6 +17,7 @@ namespace ExpenseTracker {
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMicrocharts()
                 .ConfigureFonts(fonts => {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");

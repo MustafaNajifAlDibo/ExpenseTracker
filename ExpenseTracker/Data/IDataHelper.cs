@@ -7,5 +7,6 @@ namespace ExpenseTracker.Data {
         Task AddDataAsync(Table table);
         Task UpdateDataAsync(Table table);
         Task RemoveDataAsync(Table table);
+        Task RemoveDataAtAsync(int Id);
     }
 }
