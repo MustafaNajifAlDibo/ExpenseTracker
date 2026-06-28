@@ -1,0 +1,68 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build
+bin/
+obj/
+artifacts/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+*.temp
+*.bak
+
+# NuGet
+packages/
+*.nupkg
+
+# Publish
+publish/
+AppPackages/
+
+# Android
+*.apk
+*.aab
+
+# iOS
+*.ipa
+
+# Windows
+*.msix
+*.appx
+*.appxbundle
+
+# Certificates
+*.keystore
+*.jks
+*.pfx
+*.snk
+*.pem
+*.mobileprovision
+
+# Secrets
+.env
+.env.*
+secrets.json
+appsettings.Development.json
+
+# SQLite local databases
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
